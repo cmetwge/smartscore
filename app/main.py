@@ -1,5 +1,5 @@
 from fastapi import FastAPI, File, Form, UploadFile, BackgroundTasks
-from pipeline import process_batch
+from app.pipeline import process_batch
 import uuid, os
 
 app = FastAPI()
