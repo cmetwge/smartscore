@@ -7,7 +7,7 @@ app = FastAPI()
 
 @app.get("/", response_class=HTMLResponse)
 def home():
-    with open("index.html", "r") as f:
+    with open("app/index.html", "r") as f:
         return HTMLResponse(content=f.read())
 
 @app.post("/upload")
