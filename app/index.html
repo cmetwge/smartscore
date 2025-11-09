@@ -4,15 +4,10 @@
   <meta charset="UTF-8">
   <title>QA Snapshot – Instant Call-Quality Reports</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://js.stripe.com/v3/"></script>
   <style>
-    :root{
-      --primary:#0052ff;
-      --primary-dark:#0039cb;
-      --grey:#f7f8fc;
-      --text:#111322;
-      --danger:#e60023;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    }
+    :root{--primary:#0052ff;--primary-dark:#0039cb;--grey:#f7f8fc;--text:#111322;--danger:#e60023;
+           font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
     *{box-sizing:border-box;margin:0;padding:0;}
     body{background:var(--grey);color:var(--text);line-height:1.6;}
     .container{max-width:580px;margin:auto;padding:2rem 1.5rem;}
@@ -37,7 +32,7 @@
 <body>
   <div class="container">
     <h1>Instant QA Reports for Contact-Center Calls</h1>
-    <p class="sub">Drop up to 50 call recordings. We email you a polished, branded QA PDF in about five minutes—no software to install.</p>
+    <p class="sub">Upload up to 50 call recordings. Pay securely, then get a polished QA PDF in about five minutes—no software to install.</p>
 
     <div class="card">
       <form id="upForm">
@@ -50,44 +45,55 @@
         <label for="files">Call recordings or chat transcripts</label>
         <input type="file" id="files" multiple accept="audio/*,.txt" required>
 
-        <a id="payBtn" href="https://buy.stripe.com/YOUR_PAYMENT_LINK" target="_blank" class="btn">Pay $299 →</a>
-        <div class="note">Secure checkout opens in a new tab. Return here to upload.</div>
+        <button type="button" id="payBtn" class="btn">Pay & Generate Report</button>
+        <div class="note">Secure payment handled by Stripe.</div>
       </form>
       <div id="msg"></div>
     </div>
   </div>
 
 <script>
+const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY'); // ➊ replace with real pk_test_ or pk_live_
 const form   = document.getElementById("upForm");
 const msg    = document.getElementById("msg");
-const payBtn = document.getElementById("payBtn");
+const btn    = document.getElementById("payBtn");
 
-/* only show upload form after Stripe returns with ?paid=ok */
-if (window.location.search.includes("paid=ok")) {
-  payBtn.style.display = "none";
-  msg.innerHTML = '<span class="success">Payment received—upload your files below.</span>';
-} else {
-  form.style.display = "none";
-  msg.innerHTML = '<span class="error">Please complete payment first, then return to this page.</span>';
-}
+btn.addEventListener("click", async () => {
+  const email   = document.getElementById("email").value;
+  const company = document.getElementById("company").value;
+  const files   = document.getElementById("files").files;
 
-/* upload handler */
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const data = new FormData();
-  data.append("email",   document.getElementById("email").value);
-  data.append("company", document.getElementById("company").value);
-  for (let f of document.getElementById("files").files) data.append("files", f);
+  if (!email || !company || files.length === 0) {
+    msg.innerHTML = '<span class="error">Please complete all fields and select files.</span>';
+    return;
+  }
 
-  msg.innerHTML = "Uploading…";
-  try {
-    const r = await fetch("https://YOUR_DOMAIN.up.railway.app/upload", {method:"POST", body:data});
-    const j = await r.json();
-    msg.innerHTML = '<span class="success">' + (j.detail || "Done! Check email.") + '</span>';
-  } catch (err) {
-    msg.innerHTML = '<span class="error">Upload failed—please refresh and try again.</span>';
+  msg.innerHTML = 'Contacting Stripe…';
+  // ask backend to create checkout session
+  const {sessionId} = await (await fetch("/create-checkout-session", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({email, company, fileCount: files.length})
+  })).json();
+
+  // open stripe popup (embedded)
+  const {error} = await stripe.redirectToCheckout({sessionId});
+  if (error) {
+    msg.innerHTML = '<span class="error">' + error.message + '</span>';
+  } else {
+    // on success stripe closes popup → we upload
+    submitFiles();
   }
 });
+
+// after payment confirmed, upload files
+async function submitFiles() {
+  const data = new FormData(form);
+  msg.innerHTML = 'Payment successful—building PDF…';
+  const res = await fetch("/upload", {method: "POST", body: data});
+  const j   = await res.json();
+  msg.innerHTML = '<span class="success">' + (j.detail || 'Done! Check email.') + '</span>';
+}
 </script>
 </body>
 </html>
