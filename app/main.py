@@ -1,3 +1,9 @@
+from fastapi.responses import HTMLResponse
+
+@app.get("/", response_class=HTMLResponse)
+def home():
+    with open("index.html") as f:
+        return HTMLResponse(content=f.read())
 from fastapi import FastAPI, File, Form, UploadFile, BackgroundTasks
 from app.pipeline import process_batch
 import uuid, os
