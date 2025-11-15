@@ -83,7 +83,7 @@ export default function Home() {
     if (result.success) {
       setStatus("Report generated successfully!");
       setReportLink(
-        `https://${SUPABASE_PROJECT_REF}.supabase.co/storage/v1/object/public/uploads/${result.pdfPath}`
+        `https://${mqrafvfqykvierpsjmys}.supabase.co/storage/v1/object/public/uploads/${result.pdfPath}`
       );
     } else {
       setStatus(`Analysis failed: ${result.error || 'An unexpected error occurred during analysis.'}`);
