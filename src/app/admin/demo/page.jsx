@@ -1,4 +1,5 @@
 // src/app/admin/demo/page.jsx
+'use client';
 import UploadBox from '@/components/UploadBox'
 import { redirect } from 'next/navigation'
 
