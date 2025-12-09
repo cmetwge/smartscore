@@ -1,4 +1,5 @@
 // src/app/admin/login/page.jsx
+'use client';
 import { Suspense } from 'react'
 import LoginForm from './LoginForm'
 
