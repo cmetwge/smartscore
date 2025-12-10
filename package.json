@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "next": "latest"
+    "next": "16.0.7"
   }
 }
