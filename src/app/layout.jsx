@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import './globals.css'
 import NavBar from '../components/NavBar'
+import { default as Link } from 'next/link'
 
 export default function RootLayout({ children }) {
   return (
@@ -49,4 +49,3 @@ export default function RootLayout({ children }) {
     </html>
   )
 }
-
