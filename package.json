@@ -1,15 +1,22 @@
 {
   "dependencies": {
-    "next": "16.0.7",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "lucide-react": "^0.300.0",
-    "@upstash/redis": "^1.28.2"
+    "next": "16.0.7",                 
+    "react": "^18.2.0",               
+    "react-dom": "^18.2.0",           
+    
+    "bullmq": "^5.0.0",               
+    "@supabase/supabase-js": "^2.40.0", 
+    "formidable": "^3.5.1",           
+    "stripe": "^14.18.0",             
+    "@upstash/redis": "^1.28.2",
+    
+    "lucide-react": "^0.300.0"       
+    
   },
   "devDependencies": {
-    "tailwindcss": "^4.0.0",
-    "postcss": "^8.4.31",
-    "autoprefixer": "^10.4.16"
+    "tailwindcss": "^4.0.0",          
+    "postcss": "^8.4.31",             
+    "autoprefixer": "^10.4.16"        
   
   },
   "scripts": {
