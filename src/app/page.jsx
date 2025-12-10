@@ -1,5 +1,5 @@
 // src/app/page.tsx
-import Link from 'next/link'
+import { default as Link } from 'next/link'
 
 export default function Home() {
   return (
